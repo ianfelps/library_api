@@ -1,5 +1,5 @@
 {
-  "name": "biblioteca_pessoal",
+  "name": "library_api",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,15 +7,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ianfelps/biblioteca_pessoal.git"
+    "url": "git+https://github.com/ianfelps/library_api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ianfelps/biblioteca_pessoal/issues"
+    "url": "https://github.com/ianfelps/library_api/issues"
   },
-  "homepage": "https://github.com/ianfelps/biblioteca_pessoal#readme",
+  "homepage": "https://github.com/ianfelps/library_api#readme",
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",

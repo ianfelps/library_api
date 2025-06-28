@@ -1,0 +1,8 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Library API",
+    "description": "API REST para Gestão de Usuários e Biblioteca Pessoal de Livros com Node.js, framework Express e banco de dados MySQL.",
+    "version": "1.0.0"
+  }
+}
