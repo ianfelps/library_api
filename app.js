@@ -2,6 +2,9 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
 
+const banner = require('./utils/banner');
+const swaggerDocument = require('./utils/swagger.json');
+
 // importar rotas
 // const userRoutes = require('./routes/users');
 // const bookRoutes = require('./routes/books');
@@ -11,7 +14,6 @@ const app = express();
 const port = process.env.PORT;
 
 // configurar o swagger
-const swaggerDocument = require('./swagger.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // configurar o express
@@ -35,14 +37,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Algo deu errado no servidor!');
 });
-
-const banner = `
-██╗     ██╗██████╗ ██████╗  █████╗ ██████╗ ██╗   ██╗     █████╗ ██████╗ ██╗
-██║     ██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝    ██╔══██╗██╔══██╗██║
-██║     ██║██████╔╝██████╔╝███████║██████╔╝ ╚████╔╝     ███████║██████╔╝██║
-██║     ██║██╔══██╗██╔══██╗██╔══██║██╔══██╗  ╚██╔╝      ██╔══██║██╔═══╝ ██║
-███████╗██║██████╔╝██║  ██║██║  ██║██║  ██║   ██║       ██║  ██║██║     ██║
-╚══════╝╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝╚═╝     ╚═╝`;
 
 // iniciar o servidor
 app.listen(port, () => {
