@@ -1,0 +1,28 @@
+{
+  "name": "biblioteca_pessoal",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianfelps/biblioteca_pessoal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ianfelps/biblioteca_pessoal/issues"
+  },
+  "homepage": "https://github.com/ianfelps/biblioteca_pessoal#readme",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.1",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
