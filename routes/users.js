@@ -13,10 +13,10 @@ router.post('/register', async (req, res) => {
 
     // validacoes
     if (!name || !email || !password) { // todos os campos sao obrigatorios
-        return res.status(400).json({ error: 'Todos os campos obrigatorios devem ser preenchidos!' });
+        return res.status(400).json({ error: 'All fields are required!' });
     }
     if (password.length < 6) { // senha deve ter pelo menos 6 caracteres
-        return res.status(400).json({ error: 'A senha deve ter pelo menos 6 caracteres!' });
+        return res.status(400).json({ error: 'Password must be at least 6 characters long!' });
     }
 
     // criacao do usuario
@@ -25,12 +25,12 @@ router.post('/register', async (req, res) => {
         const query = 'INSERT INTO User_TB (name, email, password) VALUES (?, ?, ?)';
         const [result] = await pool.query(query, [name, email, password_hash]);
 
-        return res.status(201).json({ message: 'Usuario cadastrado com sucesso!', id: result.insertId });
+        return res.status(201).json({ message: 'User created successfully!', id: result.insertId });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // email deve ser unico
-            return res.status(400).json({ error: 'E-mail ja cadastrado!' });
+            return res.status(400).json({ error: 'E-mail already exists!' });
         }
-        return res.status(500).json({ error: 'Erro ao cadastrar usuario!' });
+        return res.status(500).json({ error: 'Error creating user!' });
     }
 });
 
@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
 
     // validacoes
     if (!email || !password) { // email e senha sao obrigatorios
-        return res.status(400).json({ error: 'E-mail e senha obrigatorios!' });
+        return res.status(400).json({ error: 'E-mail and password are required!' });
     }
 
     // login do usuario
@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
         const [[user]] = await pool.query(query, [email]);
 
         if (!user) { // usuario nao encontrado
-            return res.status(404).json({ error: 'Usuario nao encontrado!' });
+            return res.status(404).json({ error: 'User not found!' });
         }
 
         const password_match = await bcrypt.compare(password, user.password); // comparacao da senha
@@ -74,10 +74,10 @@ router.post('/login', async (req, res) => {
             }); // resposta
 
         } else { // senha incorreta
-            return res.status(401).json({ error: 'Senha incorreta!' });
+            return res.status(401).json({ error: 'Password is incorrect!' });
         }
     } catch (error) {
-        return res.status(500).json({ error: 'Erro ao realizar login!' });
+        return res.status(500).json({ error: 'Error logging in!' });
     }
 });
 

@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // rota raiz
 app.get('/api', (req, res) => {
     res.status(200).json({
-        message: 'Bem vindo a API de biblioteca pessoal!',
+        message: 'Welcome to the Library API!',
         timestamp: new Date().toISOString()
     });
 });
@@ -35,7 +35,7 @@ app.use('/api/users', userRoutes);
 // tratamento de erros
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Algo deu errado no servidor!');
+    res.status(500).send('Something got wrong!');
 });
 
 // iniciar o servidor
