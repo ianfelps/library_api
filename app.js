@@ -6,7 +6,7 @@ const banner = require('./utils/banner');
 const swaggerDocument = require('./utils/swagger.json');
 
 // importar rotas
-// const userRoutes = require('./routes/users');
+const userRoutes = require('./routes/users');
 // const bookRoutes = require('./routes/books');
 
 // inicializar o express
@@ -29,7 +29,7 @@ app.get('/api', (req, res) => {
 });
 
 // importar rotas
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/books', bookRoutes);
 
 // tratamento de erros
