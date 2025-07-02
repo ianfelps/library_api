@@ -73,12 +73,34 @@ router.post('/register', auth.authMiddleware, async (req, res) => {
 
 // rota GET para listar todos os livros do usuario
 router.get('/list', auth.authMiddleware, async (req, res) => {
+    const { author, year, genre, status } = req.query;
+    const { _sort, _order } = req.query;
+
+    // query base
+    let query = 'SELECT id_book, title, author, year, genre, status, create_date FROM Book_TB WHERE user_id = ?';
+    const values = [req.user.id_user];
+
+    // condicoes de busca
+    const conditions = [];
+    if (author) conditions.push('author LIKE ?') && values.push(`%${author}%`);
+    if (genre) conditions.push('genre = ?') && values.push(genre)
+    if (year) conditions.push('year = ?') && values.push(year);
+    if (status) conditions.push('status = ?') && values.push(status);
+    if (conditions.length > 0) query += ' AND ' + conditions.join(' AND ');
+
+    // condicoes de ordenacao
+    const sort_fields = ['title', 'author', 'year', 'status', 'create_date'];
+    if (_sort && sort_fields.includes(_sort)) {
+        const order = (_order && _order.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+        query += ` ORDER BY ${_sort} ${order}`;
+    } else {
+        query += ' ORDER BY create_date DESC'; // Uma ordenação padrão
+    }
+
     try {
-        // listar todos os livros
-        const query = 'SELECT id_book, title, author, year, genre, status, create_date FROM Book_TB WHERE user_id = ?';
-        const [result] = await pool.query(query, [req.user.id_user]);
+        const [result] = await pool.query(query, values);
         if (result.length === 0) { // nenhum livro encontrado
-            return res.status(404).json({ error: 'No books found!' });
+            return res.status(404).json({ error: 'No books found with the specified filters!' });
         }
 
         return res.status(200).json(result);
