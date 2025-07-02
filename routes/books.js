@@ -51,17 +51,18 @@ router.post('/register', auth.authMiddleware, async (req, res) => {
         // registrar livro
         const query = 'INSERT INTO Book_TB (title, author, year, genre, user_id) VALUES (?, ?, ?, ?, ?)';
         const [result] = await pool.query(query, [title, author, year, genre, req.user.id_user]);
-
         return res.status(201).json({
             message: 'Book created successfully!',
             id_book: result.insertId,
             id_user: req.user.id_user,
             create_date: new Date().toISOString()
         });
+
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // livro deve ser unico
             return res.status(400).json({ error: 'Book already exists!' });
         }
+        
         return res.status(500).json({ error: 'Error registering book!', details: error.message });
     }
 });

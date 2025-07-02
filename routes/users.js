@@ -31,16 +31,17 @@ router.post('/register', async (req, res) => {
         const password_hash = await bcrypt.hash(password, 10); // criptografia da senha
         const query = 'INSERT INTO User_TB (name, email, password) VALUES (?, ?, ?)';
         const [result] = await pool.query(query, [name, email, password_hash]);
-
         return res.status(201).json({
             message: 'User created successfully!',
             id_user: result.insertId,
             create_date: new Date().toISOString()
         });
+
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // email deve ser unico
             return res.status(400).json({ error: 'E-mail already exists!' });
         }
+
         return res.status(500).json({ error: 'Error creating user!', details: error.message });
     }
 });
@@ -57,13 +58,11 @@ router.post('/login', async (req, res) => {
     try {
         const query = 'SELECT * FROM User_TB WHERE email = ?';
         const [[user]] = await pool.query(query, [email]);
-
         if (!user) { // usuario nao encontrado
             return res.status(404).json({ error: 'User not found!' });
         }
 
         const password_match = await bcrypt.compare(password, user.password); // comparacao da senha
-
         if (password_match) { // senha correta
             // payload para geracao do token
             const payload = {
@@ -71,14 +70,12 @@ router.post('/login', async (req, res) => {
                 name: user.name,
                 email: user.email
             };
-
              // geracao do token de autenticacao
             const jwt_token = jwt.sign(
                 payload,
                 auth.JWT_SECRET,
                 { expiresIn: '1h' } // token expira em 1 hora
             );
-
              // resposta de sucesso
             return res.status(200).json({
                 message: 'Login realizado com sucesso!',
@@ -89,6 +86,7 @@ router.post('/login', async (req, res) => {
         } else { // senha incorreta
             return res.status(401).json({ error: 'Password is incorrect!' });
         }
+
     } catch (error) {
         return res.status(500).json({ error: 'Error logging in!', details: error.message });
     }
@@ -102,7 +100,9 @@ router.get('/me', auth.authMiddleware, async (req, res) => {
         if (!user) { // usuario nao encontrado
             return res.status(404).json({ error: 'User not found!' });
         }
+
         return res.status(200).json(user);
+
     } catch (error) {
         return res.status(500).json({ error: 'Error getting user info!', details: error.message });
     }
@@ -125,24 +125,27 @@ router.put('/edit', auth.authMiddleware, async (req, res) => {
         const password_hash = await bcrypt.hash(password, 10); // criptografia da senha
         values.push(password_hash);
     }
-    
+
     if (fields.length === 0) { // pelo menos um campo deve ser atualizado
         return res.status(400).json({ error: 'At least one field must be updated!' });
     }
+
     values.push(req.user.id_user);
 
     try {
         const query = 'UPDATE User_TB SET ' + fields.join(', ') + ' WHERE id_user = ?';
         const [result] = await pool.query(query, values);
-
         if (result.affectedRows === 0) { // usuario nao encontrado
             return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
+        
         return res.status(200).json({ message: 'User info updated successfully!', id_user: req.user.id_user });
+
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // email deve ser unico
             return res.status(400).json({ error: 'E-mail already exists!' });
         }
+
         return res.status(500).json({ error: 'Error updating user info!', details: error.message });
     }
 });
@@ -157,8 +160,9 @@ router.delete('/delete', auth.authMiddleware, async (req, res) => {
         if (result.affectedRows === 0) { // usuario nao encontrado
             return res.status(404).json({ error: 'User not found!' });
         }
-        
+
         return res.status(200).json({ message: 'User and related data deleted successfully!' });
+        
     } catch (error) {
         return res.status(500).json({ error: 'Error deleting user and related data!', details: error.message });
     }
