@@ -148,8 +148,20 @@ router.put('/edit', auth.authMiddleware, async (req, res) => {
 });
 
 // rota DELETE para excluir o usuario logado e os dados relacionados
-// - somente com o proprio perfil
-// - deve estar logado
-// - excluir/anonimar todos os dados relacionados ao usuario
+router.delete('/delete', auth.authMiddleware, async (req, res) => {
+    try {
+        // excluir o usuario e os dados relacionados
+        const query = 'DELETE FROM User_TB WHERE id_user = ?';
+        const [result] = await pool.query(query, [req.user.id_user]);
+
+        if (result.affectedRows === 0) { // usuario nao encontrado
+            return res.status(404).json({ error: 'User not found!' });
+        }
+        
+        return res.status(200).json({ message: 'User and related data deleted successfully!' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error deleting user and related data!', details: error.message });
+    }
+});
 
 module.exports = router;
