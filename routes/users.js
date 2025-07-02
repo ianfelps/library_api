@@ -7,6 +7,14 @@ const jwt = require('jsonwebtoken');
 const pool = require('../database/pool');
 const auth = require('../middleware/auth');
 
+// rota GET para obter informacoes da rota
+router.get('/', (req, res) => {
+    res.status(200).json({
+        message: 'Welcome to the User section of the Library API!',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // rota POST para criar um usuario
 router.post('/register', async (req, res) => {
     const {name, email, password} = req.body;
@@ -24,7 +32,11 @@ router.post('/register', async (req, res) => {
         const query = 'INSERT INTO User_TB (name, email, password) VALUES (?, ?, ?)';
         const [result] = await pool.query(query, [name, email, password_hash]);
 
-        return res.status(201).json({ message: 'User created successfully!', id: result.insertId });
+        return res.status(201).json({
+            message: 'User created successfully!',
+            id_user: result.insertId,
+            create_date: new Date().toISOString()
+        });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // email deve ser unico
             return res.status(400).json({ error: 'E-mail already exists!' });
@@ -53,23 +65,26 @@ router.post('/login', async (req, res) => {
         const password_match = await bcrypt.compare(password, user.password); // comparacao da senha
 
         if (password_match) { // senha correta
+            // payload para geracao do token
             const payload = {
                 id_user: user.id_user,
                 name: user.name,
                 email: user.email
-            }; // payload para geracao do token
+            };
 
+             // geracao do token de autenticacao
             const jwt_token = jwt.sign(
                 payload,
                 auth.JWT_SECRET,
                 { expiresIn: '1h' } // token expira em 1 hora
-            ); // geracao do token de autenticacao
+            );
 
+             // resposta de sucesso
             return res.status(200).json({
                 message: 'Login realizado com sucesso!',
                 id_user: user.id_user,
                 token: jwt_token
-            }); // resposta
+            });
 
         } else { // senha incorreta
             return res.status(401).json({ error: 'Password is incorrect!' });
@@ -123,7 +138,7 @@ router.put('/edit', auth.authMiddleware, async (req, res) => {
         if (result.affectedRows === 0) { // usuario nao encontrado
             return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
-        return res.status(200).json({ message: 'User info updated successfully!' });
+        return res.status(200).json({ message: 'User info updated successfully!', id_user: req.user.id_user });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') { // email deve ser unico
             return res.status(400).json({ error: 'E-mail already exists!' });

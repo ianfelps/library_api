@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `Library_DB`.`User_TB` (
   `name` VARCHAR(45) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
-  `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Adicionado DEFAULT para facilitar
+  `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_user`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `Library_DB`.`Book_TB` (
   `year` INT NOT NULL,
   `genre` VARCHAR(45) NOT NULL,
   `status` VARCHAR(45) NULL DEFAULT 'Not read',
+  `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_book`),
   UNIQUE INDEX `book_UNIQUE_per_user_idx` (`user_id` ASC, `title` ASC, `author` ASC) VISIBLE,
   INDEX `fk_Book_TB_User_TB_idx` (`user_id` ASC) VISIBLE,
