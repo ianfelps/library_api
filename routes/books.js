@@ -16,19 +16,21 @@ router.get('/', auth.authMiddleware, (req, res) => {
 router.post('/register', auth.authMiddleware, async (req, res) => {
     const { title, author, year, genre } = req.body;
 
-    // validacoes
+    // validacoes de entrada
     if (!title || !author || !year || !genre) { // todos os campos sao obrigatorios
         return res.status(400).json({ error: 'All fields are required!' });
     }
+
     if (title.length < 2) { // titulo deve ter pelo menos 2 caracteres
         return res.status(400).json({ error: 'Title must be at least 2 characters long!' });
     }
+
     if (year > new Date().getFullYear()) { // ano de publicacao nao pode ser futuro
         return res.status(400).json({ error: 'Year cannot be in the future!' });
     }
 
     try {
-        // validacoes
+        // validacoes de banco de dados
         const val_query = `
             SELECT
                 COUNT(*) AS total_count,
@@ -41,9 +43,11 @@ router.post('/register', auth.authMiddleware, async (req, res) => {
         if (val_result.total_count >= 5) { // nao pode registrar mais de 5 livros
             return res.status(400).json({ error: 'You can only register 5 books per user!' });
         }
+
         if (genre === 'Biography' && val_result.biography_count >= 2) { // nao pode registrar mais de 2 livros com o genero "Biography"
             return res.status(400).json({ error: 'You can only register 2 books with the genre *Biography* per user!' });
         }
+
         if (genre === 'Science Fiction' && val_result.science_fiction_count >= 3) { // nao pode registrar mais de 3 livros com o genero "Science Fiction"
             return res.status(400).json({ error: 'You can only register 3 books with the genre *Science Fiction* per user!' });
         }
@@ -84,9 +88,99 @@ router.get('/list', auth.authMiddleware, async (req, res) => {
     }
 });
 
-// editar um livro
-// - somente os proprios livros
-// - deve estar logado
+// rota PUT para editar um livro
+router.put('/edit/:id_book', auth.authMiddleware, async (req, res) => {
+    const { id_book } = req.params;
+    const { title, author, year, genre, status } = req.body;
+
+    // verificar informacoes recebidas
+    const fields = [];
+    const values = [];
+
+    // validacoes de entrada
+    if (title) {
+        if (title.length < 2) { // titulo deve ter pelo menos 2 caracteres
+            return res.status(400).json({ error: 'Title must be at least 2 characters long!' });
+        }
+        fields.push('title = ?')
+        values.push(title);
+    }
+
+    if (author) fields.push('author = ?') && values.push(author);
+    
+    if (year) {
+        if (year > new Date().getFullYear()) { // ano de publicacao nao pode ser futuro
+            return res.status(400).json({ error: 'Year cannot be in the future!' });
+        }
+        fields.push('year = ?')
+        values.push(year);
+    }
+
+    if (genre) fields.push('genre = ?') && values.push(genre);
+    
+    if (status) fields.push('status = ?') && values.push(status);
+
+    if (fields.length === 0) { // pelo menos um campo deve ser atualizado
+        return res.status(400).json({ error: 'At least one field must be updated!' });
+    }
+
+    values.push(id_book);
+    values.push(req.user.id_user);
+
+    try {
+        // validacoes de banco de dados
+        const cur_query = 'SELECT genre FROM Book_TB WHERE id_book = ? AND user_id = ?';
+        const [[cur_result]] = await pool.query(cur_query, [id_book, req.user.id_user]);
+        if (!cur_result) { // livro nao encontrado
+            return res.status(404).json({ error: 'Book not found!' });
+        }
+
+        const val_query = `
+            SELECT
+            SUM(CASE WHEN genre = 'Biography' THEN 1 ELSE 0 END) AS biography_count,
+            SUM(CASE WHEN genre = 'Science Fiction' THEN 1 ELSE 0 END) AS science_fiction_count
+            FROM Book_TB
+            WHERE user_id = ?;
+        `;
+        const [[val_result]] = await pool.query(val_query, [req.user.id_user]);
+
+        let biography_count = val_result.biography_count || 0;
+        let science_fiction_count = val_result.science_fiction_count || 0;
+
+        // se o livro atual for Biography ou Science Fiction, subtrai 1 da respectiva contagem
+        if (cur_result.genre === 'Biography') {
+            biography_count -= 1;
+        }
+
+        if (cur_result.genre === 'Science Fiction') {
+            science_fiction_count -= 1;
+        }
+
+        if (genre === 'Biography' && biography_count >= 2) {
+            return res.status(400).json({ error: 'You can only register 2 books with the genre *Biography* per user!' });
+        }
+
+        if (genre === 'Science Fiction' && science_fiction_count >= 3) {
+            return res.status(400).json({ error: 'You can only register 3 books with the genre *Science Fiction* per user!' });
+        }
+
+        // editar livro
+        const query = 'UPDATE Book_TB SET ' + fields.join(', ') + ' WHERE id_book = ? AND user_id = ?';
+        const [result] = await pool.query(query, values);
+        if (result.affectedRows === 0) { // livro nao encontrado
+            return res.status(404).json({ error: 'Book not found!' });
+        }
+
+        return res.status(200).json({ message: 'Book edited successfully!' });
+
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') { // livro deve ser unico
+            return res.status(400).json({ error: 'Book already exists!' });
+        }
+
+        return res.status(500).json({ error: 'Error editing book!', details: error.message });
+    }
+});
 
 // excluir um livro
 // - somente os proprios livros
