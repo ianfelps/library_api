@@ -102,7 +102,7 @@ router.put('/edit/:id_book', auth.authMiddleware, async (req, res) => {
         if (title.length < 2) { // titulo deve ter pelo menos 2 caracteres
             return res.status(400).json({ error: 'Title must be at least 2 characters long!' });
         }
-        
+
         fields.push('title = ?')
         values.push(title);
     }
@@ -184,24 +184,21 @@ router.put('/edit/:id_book', auth.authMiddleware, async (req, res) => {
     }
 });
 
-// excluir um livro
-// - somente os proprios livros
-// - deve estar logado
+// rota DELETE para excluir um livro
+router.delete('/delete/:id_book', auth.authMiddleware, async (req, res) => {
+    try {
+        // excluir livro
+        const query = 'DELETE FROM Book_TB WHERE id_book = ? AND user_id = ?';
+        const [result] = await pool.query(query, [req.params.id_book, req.user.id_user]);
+        
+        if (result.affectedRows === 0) { // livro nao encontrado
+            return res.status(404).json({ error: 'Book not found!' });
+        }
 
-// filtrar livros por titulo
-// - somente os proprios livros
-// - deve estar logado
-
-// filtrar livros por autor
-// - somente os proprios livros
-// - deve estar logado
-
-// filtrar livros por genero
-// - somente os proprios livros
-// - deve estar logado
-
-// filtrar livros por status
-// - somente os proprios livros
-// - deve estar logado
+        return res.status(200).json({ message: 'Book deleted successfully!' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error deleting book!', details: error.message });
+    }
+});
 
 module.exports = router;
