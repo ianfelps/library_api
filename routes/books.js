@@ -62,14 +62,27 @@ router.post('/register', auth.authMiddleware, async (req, res) => {
         if (error.code === 'ER_DUP_ENTRY') { // livro deve ser unico
             return res.status(400).json({ error: 'Book already exists!' });
         }
-        
+
         return res.status(500).json({ error: 'Error registering book!', details: error.message });
     }
 });
 
-// listar todos os livros
-// - somente os proprios livros
-// - deve estar logado
+// rota GET para listar todos os livros do usuario
+router.get('/list', auth.authMiddleware, async (req, res) => {
+    try {
+        // listar todos os livros
+        const query = 'SELECT id_book, title, author, year, genre, status, create_date FROM Book_TB WHERE user_id = ?';
+        const [result] = await pool.query(query, [req.user.id_user]);
+        if (result.length === 0) { // nenhum livro encontrado
+            return res.status(404).json({ error: 'No books found!' });
+        }
+
+        return res.status(200).json(result);
+        
+    } catch (error) {
+        return res.status(500).json({ error: 'Error listing books!', details: error.message });
+    }
+});
 
 // editar um livro
 // - somente os proprios livros
