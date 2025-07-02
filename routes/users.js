@@ -23,6 +23,7 @@ router.post('/register', async (req, res) => {
     if (!name || !email || !password) { // todos os campos sao obrigatorios
         return res.status(400).json({ error: 'All fields are required!' });
     }
+
     if (password.length < 6) { // senha deve ter pelo menos 6 caracteres
         return res.status(400).json({ error: 'Password must be at least 6 characters long!' });
     }
@@ -121,6 +122,7 @@ router.put('/edit', auth.authMiddleware, async (req, res) => {
         if (password.length < 6) { // senha deve ter pelo menos 6 caracteres
             return res.status(400).json({ error: 'Password must be at least 6 characters long!' });
         }
+        
         fields.push('password = ?')
         const password_hash = await bcrypt.hash(password, 10); // criptografia da senha
         values.push(password_hash);

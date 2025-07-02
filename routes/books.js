@@ -102,6 +102,7 @@ router.put('/edit/:id_book', auth.authMiddleware, async (req, res) => {
         if (title.length < 2) { // titulo deve ter pelo menos 2 caracteres
             return res.status(400).json({ error: 'Title must be at least 2 characters long!' });
         }
+        
         fields.push('title = ?')
         values.push(title);
     }
@@ -112,6 +113,7 @@ router.put('/edit/:id_book', auth.authMiddleware, async (req, res) => {
         if (year > new Date().getFullYear()) { // ano de publicacao nao pode ser futuro
             return res.status(400).json({ error: 'Year cannot be in the future!' });
         }
+
         fields.push('year = ?')
         values.push(year);
     }
