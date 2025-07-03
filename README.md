@@ -77,7 +77,6 @@ API REST completa, desenvolvida com Node.js e Express, para a criação e gerenc
     -   Use o exemplo abaixo como modelo e preencha com suas credenciais:
 
     ```env
-    # Arquivo .env.example
 
     # Configurações do Servidor
     PORT=3000
@@ -90,6 +89,9 @@ API REST completa, desenvolvida com Node.js e Express, para a criação e gerenc
 
     # Segredo para o JWT
     JWT_SECRET=seu_segredo_super_secreto_aqui
+
+    # Configurações de URL
+    URL=http://localhost:3000
     ```
 
 5.  **Adicione o script de "start" (Recomendado):**

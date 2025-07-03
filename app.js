@@ -21,6 +21,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // rota raiz
+app.get('/', (req, res) => {
+    res.status(200).json({
+        message: 'Welcome to the Library API!',
+        api: process.env.URL,
+        docs: process.env.URL + '/api-docs',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// rota raiz da api
 app.get('/api', (req, res) => {
     res.status(200).json({
         message: 'Welcome to the Library API!',
@@ -43,6 +53,6 @@ app.listen(port, () => {
     console.clear();
     console.log(banner);
     console.log(`Server started on port ${port} !`);
-    console.log(`API available at: http://localhost:${port}/api !`);
-    console.log(`Swagger Docs available at: http://localhost:${port}/api-docs !`);
+    console.log(`API available at: ${process.env.URL}/api !`);
+    console.log(`Swagger Docs available at: ${process.env.URL}/api-docs !`);
 });
