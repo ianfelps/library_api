@@ -131,3 +131,19 @@ A documentação completa e interativa, com todos os detalhes sobre os endpoints
 | `GET`  | `/books/list`               | Lista e filtra os livros do usuário.      | **Sim** |
 | `PUT`  | `/books/edit/{id_book}`     | Edita um livro específico.                | **Sim** |
 | `DELETE`| `/books/delete/{id_book}`   | Deleta um livro específico.               | **Sim** |
+
+## 🌐 Deploy
+
+O deploy desta aplicação foi realizado utilizando os seguintes serviços:
+
+-   **Backend (Node.js/Express):** Hospedado na plataforma **[Render](https://render.com/)**, que gerencia o deploy contínuo a partir do repositório no GitHub.
+-   **Banco de Dados (MySQL):** Hospedado na **[Clever Cloud](https://www.clever-cloud.com/)**, garantindo um banco de dados relacional estável e seguro.
+
+*As variáveis de ambiente (`DB_HOST`, `JWT_SECRET`, etc.) foram configuradas diretamente nos painéis de serviço da Render para garantir a segurança das credenciais.*
+
+### Acesse a API
+
+A API está disponível publicamente e pode ser acessada através dos seguintes links:
+
+- **URL Base da API:** [`https://library-api-t563.onrender.com/api`](https://library-api-t563.onrender.com/api)
+- **Documentação Interativa (Swagger):** [`https://library-api-t563.onrender.com/api-docs`](https://library-api-t563.onrender.com/api-docs)
