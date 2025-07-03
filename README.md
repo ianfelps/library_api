@@ -58,7 +58,7 @@ API REST completa, desenvolvida com Node.js e Express, para a criação e gerenc
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/ianfelps/library_api.git](https://github.com/ianfelps/library_api.git)
+    git clone https://github.com/ianfelps/library_api.git
     cd library_api
     ```
 
