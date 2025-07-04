@@ -1,4 +1,4 @@
-# Library API
+# 📚 Library API - API para Gestão de Usuários e Biblioteca Pessoal de Livros
 
 <pre>
 ██╗     ██╗██████╗ ██████╗  █████╗ ██████╗ ██╗   ██╗     █████╗ ██████╗ ██╗
@@ -115,8 +115,6 @@ API REST completa, desenvolvida com Node.js e Express, para a criação e gerenc
 ## 📖 Endpoints da API
 
 A documentação completa e interativa, com todos os detalhes sobre os endpoints, schemas e exemplos, está disponível através do [Swagger UI](docs/swagger.png).
-
-**URL da Documentação:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ### Principais Rotas
 
