@@ -73,11 +73,9 @@ API REST completa, desenvolvida com Node.js e Express, para a criação e gerenc
     -   O script já inclui a relação `ON DELETE CASCADE`, que remove os livros de um usuário quando a conta é excluída.
 
 4.  **Configure as Variáveis de Ambiente:**
-    -   Crie um arquivo `.env` na raiz do projeto.
-    -   Use o exemplo abaixo como modelo e preencha com suas credenciais:
+    -   Crie um arquivo `.env` na raiz do projeto a partir do exemplo `.env.example`.
 
     ```env
-
     # Configurações do Servidor
     PORT=3000
 
